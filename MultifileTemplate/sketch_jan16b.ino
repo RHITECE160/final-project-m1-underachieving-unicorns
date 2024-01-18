@@ -51,6 +51,8 @@ const uint16_t fastSpeed = 30;
 
 int turnValue;
 int rightStick;
+int leftMotorSpeed;
+int rightMotorSpeed;
 
 void setup() {
   Serial.begin(57600);
@@ -118,22 +120,24 @@ void loop() {
 void RemoteControlPlaystation() {
   while (CurrentRemoteMode == 0) {
     ps2x.read_gamepad();
-    turnValue = -(ps2x.Analog(PSS_LY) - 127);
+    turnValue = -(ps2x.Analog(PSS_RX) - 127);
     rightStick = -(ps2x.Analog(PSS_RY) - 127);
-    Serial.print("Stick Values:");
-    Serial.print(",");
-    Serial.println(rightStick, DEC);
-    if (rightStick > 10 || rightStick < -10) {
+   
+    Serial.print("left motor value: ");
+    Serial.println(map((map(rightStick, 0, 128, 0, 100) - map(turnValue, 0, 128, 0, 50)), -150, 150, -100, 100));
+    Serial.print("right motor value: ");
+    Serial.println(map((map(rightStick, 0, 128, 0, 100) + map(turnValue, -128, 0, -50, 0)), -150, 150, -100, 100));
+    delay(100);
+    if (rightStick > 10 || rightStick < -10|| turnValue > 10 || turnValue < -10) {
       enableMotor(2);
-      if (rightStick > 10) {
-        Serial.println("right backwards");
-        setMotorDirection(2, MOTOR_DIR_BACKWARD);
-        setMotorSpeed(2, map(rightStick, 0, 128, 0, 100));
-      } else {
-        Serial.println("right forwards");
-        setMotorDirection(2, MOTOR_DIR_FORWARD);
-        setMotorSpeed(2, map(rightStick, -128, 0, 0, 100));
-      }
+      leftMotorSpeed = map((map(rightStick, 0, 128, 0, 100) - map(turnValue, 0, 128, 0, 50)), -150, 150, -100, 100);
+      rightMotorSpeed = map((map(rightStick, 0, 128, 0, 100) + map(turnValue, -128, 0, -50, 0)), -150, 150, -100, 100);
+      if (leftMotorSpeed < 0) setMotorDirection(0, 1);
+      else if (leftMotorSpeed > 0) setMotorDirection(0, 0);
+      if (rightMotorSpeed < 0) setMotorDirection(1, 1);
+      else if (rightMotorSpeed > 0) setMotorDirection(1, 0);
+      setMotorSpeed(0, abs(leftMotorSpeed));
+      setMotorSpeed(1, abs(rightMotorSpeed));
     } else setMotorSpeed(2, 0);
   }
   // put your code here to run in remote control mode
