@@ -28,10 +28,10 @@
 #include "PS2X_lib.h"
 
 // Define pin numbers for the button on the PlayStation controller
-#define PS2_DAT 14  //P1.7 <-> brown wire
-#define PS2_CMD 15  //P1.6 <-> orange wire
-#define PS2_SEL 34  //P2.3 <-> yellow wire (also called attention)
-#define PS2_CLK 35  //P6.7 <-> blue wire
+#define PS2_DAT 26  //P1.7 <-> brown wire
+#define PS2_CMD 5   //P1.6 <-> orange wire
+#define PS2_SEL 37  //P2.3 <-> yellow wire (also called attention)
+#define PS2_CLK 2   //P6.7 <-> blue wire
 
 // Create an instance of the playstation controller object
 PS2X ps2x;
@@ -49,10 +49,21 @@ RemoteMode CurrentRemoteMode = PLAYSTATION;
 const uint16_t lowSpeed = 15;
 const uint16_t fastSpeed = 30;
 
+int turnValue;
+int rightStick;
+int leftMotorSpeed;
+int rightMotorSpeed;
+int acceleration;
+int clawPos;
+int currentMillis;
+
+boolean clawOn = false;
+Servo myservo;
+
 void setup() {
   Serial.begin(57600);
   Serial.print("Starting up Robot code...... ");
-
+  myservo.attach(SRV_0);
   // Run setup code
   setupRSLK();
 
@@ -94,7 +105,6 @@ void loop() {
 
   // Operate the robot in remote control mode
   if (CurrentRemoteMode == 0) {
-    Serial.println("Running remote control with the Playstation Controller");
     RemoteControlPlaystation();
 
   } else if (CurrentRemoteMode == 1) {
@@ -103,7 +113,7 @@ void loop() {
 }
 
 
-  /* RemoteControlPlaystation() function
+/* RemoteControlPlaystation() function
   This function uses a playstation controller and the PLSK libraray with
   an RLSK robot using to implement remote controller. 
   
@@ -113,17 +123,49 @@ void loop() {
   PAD UP button moves both motors forward
   CROSS button stops motors
   */
-  void RemoteControlPlaystation() {
-    // put your code here to run in remote control mode
+void RemoteControlPlaystation() {
+  while (CurrentRemoteMode == 0) {
+    ps2x.read_gamepad();
+    turnValue = -(ps2x.Analog(PSS_RX) - 127);
+    rightStick = -(ps2x.Analog(PSS_RY) - 127);
 
-    // Example of receive and decode remote control command
-    // the forward() and stop() functions should be independent of
-    // the control methods
-    if (ps2x.Button(PSB_PAD_UP)) {
-      Serial.println("PAD UP button pushed ");
-      forward();
-    } else if (ps2x.Button(PSB_CROSS)) {
-      Serial.println("CROSS button pushed");
-      stop();
+    if (ps2x.Button(PSB_R2)){
+      currentMillis = millis();
+      clawOn = true;
     }
+    if (clawOn){
+      if (clawPos < 140){
+        clawPos = 40 + (millis() - currentMillis)/10;
+        Serial.println(clawPos);
+        myservo.write(clawPos);
+      }
+    }
+    if (ps2x.Button(PSB_R1)){
+      clawOn = false;
+      clawPos = 40;
+      myservo.write (clawPos);
+    }
+
+    Serial.print("left motor value: ");
+    Serial.println(map((map(rightStick, 0, 128, 0, 100) - map(turnValue, 0, 128, 0, 50)), -150, 150, -100, 100));
+    Serial.print("right motor value: ");
+    Serial.println(map((map(rightStick, 0, 128, 0, 100) + map(turnValue, -128, 0, -50, 0)), -150, 150, -100, 100));
+    if (rightStick > 10 || rightStick < -10|| turnValue > 10 || turnValue < -10) {
+      enableMotor(2);
+      leftMotorSpeed = map((map(rightStick, 0, 128, 0, 100) - map(turnValue, 0, 128, 0, 50)), -150, 150, -100, 100);
+      rightMotorSpeed = map((map(rightStick, 0, 128, 0, 100) + map(turnValue, -128, 0, -50, 0)), -150, 150, -100, 100);
+      if (leftMotorSpeed < 0) setMotorDirection(0, 1);
+      else if (leftMotorSpeed > 0) setMotorDirection(0, 0);
+      if (rightMotorSpeed < 0) setMotorDirection(1, 1);
+      else if (rightMotorSpeed > 0) setMotorDirection(1, 0);
+
+
+      setMotorSpeed(0, abs(leftMotorSpeed));
+      setMotorSpeed(1, abs(rightMotorSpeed));
+    } else setMotorSpeed(2, 0);
   }
+  // put your code here to run in remote control mode
+
+  // Example of receive and decode remote control command
+  // the forward() and stop() functions should be independent of
+}
