@@ -25,7 +25,26 @@ void forward() {
     setMotorSpeed(BOTH_MOTORS, fastSpeed);
 }
 
+void turnLeft(){
+  enableMotor(BOTH_MOTORS);
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+  setMotorSpeed(BOTH_MOTORS, fastSpeed);
+}
+
+void turnRight(){
+  enableMotor(BOTH_MOTORS);
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
+  setMotorSpeed(BOTH_MOTORS, fastSpeed);
+}
 /* Stops robot forward: both motors disabled */
+void backward(){
+  enableMotor(BOTH_MOTORS);
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+  setMotorSpeed(BOTH_MOTORS, fastSpeed);
+}
 void stop() {
     disableMotor(BOTH_MOTORS);
 }
