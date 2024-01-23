@@ -12,8 +12,8 @@
   2. void stopMotor()
      - Stops the motor.
 
-  Created by: Your Name
-  Date: Current Date
+  Created by: Mateo Olson, Connor Bodie, John Webster 
+  Date: 1/22/24 
   Version: 1.0
 */
 
@@ -25,26 +25,26 @@ void forward() {
     setMotorSpeed(BOTH_MOTORS, fastSpeed);
 }
 
-void turnLeft(){
+void turnLeft(){ //Turn left by turning left motor forward and right motor backwards 
   enableMotor(BOTH_MOTORS);
   setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
   setMotorSpeed(BOTH_MOTORS, fastSpeed);
 }
 
-void turnRight(){
+void turnRight(){ //Inverse of turnLeft()
   enableMotor(BOTH_MOTORS);
   setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
   setMotorSpeed(BOTH_MOTORS, fastSpeed);
 }
 /* Stops robot forward: both motors disabled */
-void backward(){
+void backward(){ // Inverse of forward()
   enableMotor(BOTH_MOTORS);
   setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
   setMotorSpeed(BOTH_MOTORS, fastSpeed);
 }
-void stop() {
+void stop() { //stops motors 
     disableMotor(BOTH_MOTORS);
 }

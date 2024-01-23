@@ -31,9 +31,13 @@
 IRreceiver irRX(IR_RCV_PIN);
 
 IRData IRresults;
+/* IR Controller - Code to handle IR Controller, maps button presses to robot movements. 
+* (Modified example template)
+* By: Connor Bodie, John Webster
+* 1/23/24 
+*/
 
-
-void RemoteControlIR(){
+void RemoteControlIR(){ //RemoteControlIR function, called in MultifileTemplate when we are demonstrating the IR controller 
   
   if (irRX.initIRReceiver()) {
         Serial.println(F("Ready to receive NEC IR signals at pin " STR(IR_RCV_PIN)));
@@ -42,7 +46,7 @@ void RemoteControlIR(){
         while (1) {;}
   }
 
-  while (CurrentRemoteMode == 1){
+  while (CurrentRemoteMode == 1){  // setup from the example template 
     if (irRX.decodeIR(&IRresults)) {
         Serial.print("A=0x");
         Serial.print(IRresults.address, HEX);
@@ -55,25 +59,25 @@ void RemoteControlIR(){
     int command = translateIR();
     Serial.println(command);
     switch(command){
-      case 0x46:
+      case 0x46: //"VOL+" Button for forward 
         forward();
         break;
-      case 0x43:
-        turnLeft();
-        break;
-      case 0x44:
+      case 0x43: //"RIGHT" Button for turn right 
         turnRight();
         break;
-      case 0x15:
+      case 0x44:
+        turnLeft(); //"LEFT" Button for turn left
+        break;
+      case 0x15: // "VOL-" Button for go backwards
         backward();
         break;
-      case 0x9:
+      case 0x9: // "UP" Button for open claw 
         openClaw();
         break;
-      case 0x7:
-        closeClaw();
+      case 0x7: //"Down" Button for close claw
+        closeClaw(); 
         break;
-      default:
+      default: // "Default" accessed by pressing any other button. Stops robot
         stop();
         break;
     }
