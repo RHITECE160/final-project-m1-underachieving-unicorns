@@ -106,9 +106,6 @@ void setup() {
     delayMicroseconds(1000 * 1000);
   }
 
-  // set pushbutton on breadboard to use internal pullup resistor
-  pinMode(START_BUTTON, INPUT_PULLUP);
-
 }
 
 void loop() {
@@ -132,7 +129,7 @@ void loop() {
 void updateStateMachine() {
   switch (RobotCurrentState) {
     case INITIALIZE:
-      if (digitalRead(START_BUTTON) == 0) {
+      if (ps2x.Button(PSB_SQUARE)) {
         Serial.print("start button has been pressed going to manual");
         //go to Manual state when start button pushed
         RobotCurrentState = MANUAL;
