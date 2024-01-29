@@ -26,7 +26,11 @@ void RemoteControl() {
     ps2x.read_gamepad();
     turnValue = -(ps2x.Analog(PSS_RX) - 127);
     rightStick = -(ps2x.Analog(PSS_RY) - 127);
-
+    if (ps2x.Button(PSB_CIRCLE)) {
+        // go to Autonomous state when circle button pushed
+        RobotCurrentState = AUTONOMOUS;
+        break;
+      }
     if (ps2x.Button(PSB_R2)) {
       currentMillis = millis();
       clawOn = true;
