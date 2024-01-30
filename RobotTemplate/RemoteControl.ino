@@ -23,6 +23,7 @@ void RemoteControl() {
     if (ps2x.Button(PSB_CIRCLE)) {
       // go to Autonomous state when circle button pushed
       RobotCurrentState = AUTONOMOUS;
+      break;
     }
 
     if (ps2x.Button(PSB_R2)) {
@@ -37,6 +38,7 @@ void RemoteControl() {
       if (ps2x.Button(PSB_R1)) {
         clawOn = false;
         clawPos = 40;
+        myservo.write(clawPos);
       }
     }
 
