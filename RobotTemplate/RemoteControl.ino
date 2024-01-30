@@ -60,5 +60,4 @@ void RemoteControl() {
       setMotorSpeed(1, abs(rightMotorSpeed));
     } else setMotorSpeed(2, 0);
   }
-  Serial.println("Entering auton");
 }

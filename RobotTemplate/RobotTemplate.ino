@@ -31,10 +31,10 @@
 #include "PS2X_lib.h"
 
 // Define pin numbers for the button on the PlayStation controller
-#define PS2_DAT 26  //P1.7 <-> brown wire
-#define PS2_CMD 5   //P1.6 <-> orange wire
-#define PS2_SEL 37  //P2.3 <-> yellow wire (also called attention)
-#define PS2_CLK 2   //P6.7 <-> blue wire
+#define PS2_DAT 26       //P1.7 <-> brown wire
+#define PS2_CMD 5        //P1.6 <-> orange wire
+#define PS2_SEL 37       //P2.3 <-> yellow wire (also called attention)
+#define PS2_CLK 2        //P6.7 <-> blue wire
 #define START_BUTTON 18  //P3.0 a push button on top of the breadboard
 
 // Create an instance of the playstation controller object
@@ -54,7 +54,7 @@ int rightMotorSpeed;
 int clawPos;
 int currentMillis;
 boolean clawOn = false;
-
+boolean switchPressed = false;
 
 // Define lower-level state machine for AUTONOMOUS mode
 enum AutoState {
@@ -74,9 +74,9 @@ AutoState AutoCurrentState = START;
 unsigned long lastActionTime = 0;  // Variable to store the last time an action was taken
 
 // Tuning Parameters
-const uint16_t normalSpeed = 20;
-const uint16_t fastSpeed = 25;
-const unsigned long movementDuration = 5000;  // Duration for movement forward autonomously in milliseconds
+const uint16_t normalSpeed = 15;
+const uint16_t fastSpeed =25;
+const unsigned long movementDuration = 4000;  // Duration for movement forward autonomously in milliseconds
 const uint8_t lineColor = LIGHT_LINE;
 
 //Setting up servo
@@ -112,7 +112,6 @@ void setup() {
       Serial.println("Controller refusing to enter Pressures mode, may not support it. ");
     delayMicroseconds(1000 * 1000);
   }
-
 }
 
 void loop() {
@@ -158,7 +157,7 @@ void updateStateMachine() {
         // go to manual state when square button pushed
         RobotCurrentState = MANUAL;
         // reset autonomous state to start state for the next time
-        AutoCurrentState = START; 
+        AutoCurrentState = START;
       }
 
       break;

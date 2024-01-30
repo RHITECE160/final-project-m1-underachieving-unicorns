@@ -18,10 +18,14 @@
 */
 
 /* Moves robot forward: both motors forward same speed */
-void forward() {
-  
-  uint32_t linePos = getLinePosition();
+void followLine() {
 
+  uint32_t linePos = getLinePosition();
+  if (ps2x.Button(PSB_SQUARE)) {
+    Serial.print("start button has been pressed going to manual");
+    //go to Manual state when start button pushed
+    RobotCurrentState = MANUAL;
+  }
   if ((linePos > 0) && (linePos < 4000)) {  // turn left
     setMotorSpeed(LEFT_MOTOR, normalSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
@@ -34,6 +38,30 @@ void forward() {
   }
 }
 
+void forward() {
+  enableMotor(BOTH_MOTORS);
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
+  setMotorSpeed(BOTH_MOTORS, fastSpeed);
+}
+void backwards(int x) {
+  int start = millis();
+  while (millis() < start + x) {
+    enableMotor(BOTH_MOTORS);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorSpeed(BOTH_MOTORS, fastSpeed);
+  }
+}
+void turnRight(int x) {
+  int start = millis();
+  while (millis() < start + x) {
+    enableMotor(BOTH_MOTORS);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorSpeed(BOTH_MOTORS, 50);
+  }
+}
 /* Stops robot forward: both motors disabled */
 void stop() {
   disableMotor(BOTH_MOTORS);

@@ -48,11 +48,12 @@ void AutonomousControl() {
 
         /* Must be called prior to using getLinePosition() or readCalLineSensor() */
         calibrateLineSensor(lineColor);
- disableMotor(BOTH_MOTORS);
- delay(500);
- enableMotor(BOTH_MOTORS);
-        while(millis() - lastActionTime < movementDuration){
-        forward();
+        disableMotor(BOTH_MOTORS);
+        delay(500);
+        enableMotor(BOTH_MOTORS);
+        while (millis() - lastActionTime < movementDuration) {
+          followLine();
+          
         }
         // Check if the movement duration has passed
         if (millis() - lastActionTime >= movementDuration) {
@@ -60,27 +61,50 @@ void AutonomousControl() {
           AutoCurrentState = AUTO_ACTION2;  // Transition to next state
           lastActionTime = millis();        // Record the time when the next state started
         }
+
+
         break;
 
       case AUTO_ACTION2:
         Serial.println("in Autonomous mode the current state: AUTO_ACTION2");
+        forward();
         
-        delay(1000);                      // Placeholder delay
-        AutoCurrentState = AUTO_ACTION3;  // Transition to next state
+        if (getBumpSwitchPressed() > 0) {
+          stop();                           //stop the forward movement
+          backwards(800);                    // Placeholder delay
+          AutoCurrentState = AUTO_ACTION3;  // Transition to next state
+        }
         break;
 
       case AUTO_ACTION3:
         Serial.println("in Autonomous mode the current state: AUTO_ACTION3");
         // Add state instructions here
-        delay(1000);                      // Placeholder delay
+        turnRight(250);                     // Placeholder delay
         AutoCurrentState = AUTO_ACTION4;  // Transition to next state
         break;
 
       case AUTO_ACTION4:
-        Serial.println("in Autonomous mode the current state: AUTO_ACTION4");
-        // Add state instructions here
-        delay(1000);              // Placeholder delay
-        AutoCurrentState = IDLE;  // Transition to next state
+        setMotorDirection(BOTH_MOTORS, MOTOR_DIR_FORWARD);
+        /* Enable both motors */
+       
+        /* Set both motors speed 20 */
+        setMotorSpeed(BOTH_MOTORS, 20);
+
+        /* Must be called prior to using getLinePosition() or readCalLineSensor() */
+        calibrateLineSensor(lineColor);
+        disableMotor(BOTH_MOTORS);
+        delay(500);
+        enableMotor(BOTH_MOTORS);
+       while (!switchPressed) {
+          followLine();
+          if(getBumpSwitchPressed() > 0){
+            switchPressed = true;
+          }
+        }
+        backwards(100);
+        clawPos = 40;
+        myservo.write(clawPos);
+        AutoCurrentState = IDLE;
         break;
 
       default:
