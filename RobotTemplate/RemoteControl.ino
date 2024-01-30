@@ -14,12 +14,6 @@
   Date: Current Date
   Version: 1.0
 */
-int turnValue;
-int rightStick;
-int leftMotorSpeed;
-int rightMotorSpeed;
-int clawPos;
-int currentMillis;
 
 void RemoteControl() {
   while (RobotCurrentState = MANUAL) {
@@ -27,10 +21,10 @@ void RemoteControl() {
     turnValue = -(ps2x.Analog(PSS_RX) - 127);
     rightStick = -(ps2x.Analog(PSS_RY) - 127);
     if (ps2x.Button(PSB_CIRCLE)) {
-        // go to Autonomous state when circle button pushed
-        RobotCurrentState = AUTONOMOUS;
-        break;
-      }
+      // go to Autonomous state when circle button pushed
+      RobotCurrentState = AUTONOMOUS;
+    }
+
     if (ps2x.Button(PSB_R2)) {
       currentMillis = millis();
       clawOn = true;
@@ -46,7 +40,10 @@ void RemoteControl() {
       }
     }
 
-
+    Serial.print("left motor value: ");
+    Serial.println(map((map(rightStick, 0, 128, 0, 100) - map(turnValue, 0, 128, 0, 50)), -150, 150, -100, 100));
+    Serial.print("right motor value: ");
+    Serial.println(map((map(rightStick, 0, 128, 0, 100) + map(turnValue, -128, 0, -50, 0)), -150, 150, -100, 100));
     if (rightStick > 10 || rightStick < -10 || turnValue > 10 || turnValue < -10) {
       enableMotor(2);
       leftMotorSpeed = map((map(rightStick, 0, 128, 0, 100) - map(turnValue, 0, 128, 0, 50)), -150, 150, -100, 100);
@@ -61,4 +58,5 @@ void RemoteControl() {
       setMotorSpeed(1, abs(rightMotorSpeed));
     } else setMotorSpeed(2, 0);
   }
+  Serial.println("Entering auton");
 }

@@ -47,6 +47,15 @@ enum RobotState {
   AUTONOMOUS
 };
 
+int turnValue;
+int rightStick;
+int leftMotorSpeed;
+int rightMotorSpeed;
+int clawPos;
+int currentMillis;
+boolean clawOn = false;
+
+
 // Define lower-level state machine for AUTONOMOUS mode
 enum AutoState {
   START,
@@ -69,8 +78,6 @@ const uint16_t lowSpeed = 15;
 const uint16_t fastSpeed = 30;
 const unsigned long movementDuration = 2000;  // Duration for movement forward autonomously in milliseconds
 
-//Setting claw to off
-boolean clawOn = false;
 
 //Setting up servo
 Servo myservo;
@@ -140,6 +147,7 @@ void updateStateMachine() {
       Serial.print("in manual state........");
       if (ps2x.Button(PSB_CIRCLE)) {
         // go to Autonomous state when circle button pushed
+        Serial.print("stop button has been pressed going to auton");
         RobotCurrentState = AUTONOMOUS;
       }
       break;
