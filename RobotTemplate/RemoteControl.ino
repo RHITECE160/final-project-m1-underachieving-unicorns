@@ -30,6 +30,9 @@ void RemoteControl() {
       currentMillis = millis();
       clawOn = true;
     }
+    if(ps2x.Button(PSB_SQUARE)){
+      IRTransmit(0xEE, 0xEE);
+    }
     if (clawOn) {
       if (clawPos < 140) {
         clawPos = 40 + (millis() - currentMillis) / 10;
