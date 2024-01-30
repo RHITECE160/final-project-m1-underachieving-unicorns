@@ -19,13 +19,22 @@
 
 /* Moves robot forward: both motors forward same speed */
 void forward() {
-    enableMotor(BOTH_MOTORS);
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorSpeed(BOTH_MOTORS, fastSpeed);
+  
+  uint32_t linePos = getLinePosition();
+
+  if ((linePos > 0) && (linePos < 4000)) {  // turn left
+    setMotorSpeed(LEFT_MOTOR, normalSpeed);
+    setMotorSpeed(RIGHT_MOTOR, fastSpeed);
+  } else if (linePos > 5000) {  // turn right
+    setMotorSpeed(LEFT_MOTOR, fastSpeed);
+    setMotorSpeed(RIGHT_MOTOR, normalSpeed);
+  } else {  // go straight
+    setMotorSpeed(LEFT_MOTOR, normalSpeed);
+    setMotorSpeed(RIGHT_MOTOR, normalSpeed);
+  }
 }
 
 /* Stops robot forward: both motors disabled */
 void stop() {
-    disableMotor(BOTH_MOTORS);
+  disableMotor(BOTH_MOTORS);
 }
