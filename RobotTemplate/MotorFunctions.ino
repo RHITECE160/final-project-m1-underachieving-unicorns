@@ -16,7 +16,16 @@
   Date: Current Date
   Version: 1.0
 */
+/* Diameter of Romi wheels in inches 
+ *  2.7559055" = 7.0 cm (International System of Units) 
+ */
+const float wheelDiameter = 2.7559055; 
 
+/* Number of encoder (rising) pulses every time the wheel turns completely */
+const int cntPerRevolution = 360;
+
+
+const int wheelSpeed = 15; // Default raw pwm speed for motor.
 /* Moves robot forward: both motors forward same speed */
 void followLine() {
 
@@ -44,23 +53,26 @@ void forward() {
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
   setMotorSpeed(BOTH_MOTORS, fastSpeed);
 }
-void backwards(int x) {
-  int start = millis();
-  while (millis() < start + x) {
-    enableMotor(BOTH_MOTORS);
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
-    setMotorSpeed(BOTH_MOTORS, fastSpeed);
+void backwardsEncoder(int degrees){
+  resetLeftEncoderCnt();
+  resetRightEncoderCnt();
+  enableMotor(BOTH_MOTORS);
+  setMotorDirection(BOTH_MOTORS, MOTOR_DIR_BACKWARD);
+  setMotorSpeed(BOTH_MOTORS, 15);
+  while((getEncoderRightCnt()+getEncoderLeftCnt())/2 < degrees){
   }
+  disableMotor(BOTH_MOTORS);
 }
-void turnRight(int x) {
-  int start = millis();
-  while (millis() < start + x) {
-    enableMotor(BOTH_MOTORS);
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
-    setMotorSpeed(BOTH_MOTORS, 50);
+void turnRight(int degrees) {
+  resetLeftEncoderCnt();
+  resetRightEncoderCnt();
+  enableMotor(BOTH_MOTORS);
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+  setMotorSpeed(BOTH_MOTORS, 15);
+  while((getEncoderRightCnt()<degrees)){
   }
+  disableMotor(BOTH_MOTORS);
 }
 /* Stops robot forward: both motors disabled */
 void stop() {

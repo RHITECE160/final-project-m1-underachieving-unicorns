@@ -71,7 +71,7 @@ void AutonomousControl() {
         
         if (getBumpSwitchPressed() > 0) {
           stop();                           //stop the forward movement
-          backwards(800);                    // Placeholder delay
+          backwardsEncoder(360);                    // Placeholder delay
           AutoCurrentState = AUTO_ACTION3;  // Transition to next state
         }
         break;
@@ -79,7 +79,7 @@ void AutonomousControl() {
       case AUTO_ACTION3:
         Serial.println("in Autonomous mode the current state: AUTO_ACTION3");
         // Add state instructions here
-        turnRight(250);                     // Placeholder delay
+        turnRight(180);                     // Placeholder delay
         AutoCurrentState = AUTO_ACTION4;  // Transition to next state
         break;
 
@@ -101,7 +101,7 @@ void AutonomousControl() {
             switchPressed = true;
           }
         }
-        backwards(100);
+        backwardsEncoder(100);
         clawPos = 40;
         myservo.write(clawPos);
         AutoCurrentState = IDLE;
