@@ -71,33 +71,43 @@ void AutonomousControl() {
         if (getBumpSwitchPressed() > 0) {
           stop();  //stop the forward movement
           Serial.println("backwards");
-          backwards(800);                   // Placeholder delay
+          backwards(825);                   // Placeholder delay
           AutoCurrentState = AUTO_ACTION3;  // Transition to next state
-        } else forward(500);
+        } else forward(50);
         break;
 
       case AUTO_ACTION3:
         Serial.println("in Autonomous mode the current state: AUTO_ACTION3");
         // Add state instructions here
         Serial.println("right");
-        turnRight(260);  // Placeholder delay
+        turnRight(330);  // Placeholder delay
         Serial.println("forward");
-        forward(1500);
+        forward(2000);
         AutoCurrentState = AUTO_ACTION4;  // Transition to next state
         break;
 
       case AUTO_ACTION4:
+      lastActionTime = millis();  
+      while (millis() - lastActionTime < movementDuration) {
+          followLine();
+        }
+        // Check if the movement duration has passed
+        if (millis() - lastActionTime >= movementDuration) {
+          stop();                           //stop the forward movement
+          lastActionTime = millis();        // Record the time when the next state started
+        }
         while (!switchPressed) {
           Serial.println("in Autonomous mode the current state: AUTO_ACTION4");
-          followLine();
+          forward(250);
           if (getBumpSwitchPressed() > 0) {
             switchPressed = true;
           }
         }
-        backwards(100);
+        backwards(250);
         clawPos = 40;
         myservo.write(clawPos);
         AutoCurrentState = IDLE;
+        clawOn = false;
         break;
 
       default:

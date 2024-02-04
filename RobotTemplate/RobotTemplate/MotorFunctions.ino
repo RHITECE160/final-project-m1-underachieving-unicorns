@@ -27,8 +27,8 @@ void followLine() {
     RobotCurrentState = MANUAL;
   }
   if ((linePos > 0) && (linePos < 4000)) {  // turn left
-    setMotorSpeed(LEFT_MOTOR, 10);
-    setMotorSpeed(RIGHT_MOTOR, 20);
+    setMotorSpeed(LEFT_MOTOR, 13);
+    setMotorSpeed(RIGHT_MOTOR, 23);
   } else if (linePos > 5000) {  // turn right
     setMotorSpeed(LEFT_MOTOR, 20);
     setMotorSpeed(RIGHT_MOTOR, 10);
@@ -44,7 +44,7 @@ void forward(int x) {
     enableMotor(BOTH_MOTORS);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorSpeed(BOTH_MOTORS, fastSpeed+20);
+    setMotorSpeed(BOTH_MOTORS, fastSpeed+10);
   }
 }
 void backwards(int x) {
@@ -62,7 +62,7 @@ void turnRight(int x) {
     enableMotor(BOTH_MOTORS);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
-    setMotorSpeed(BOTH_MOTORS, 35);
+    setMotorSpeed(BOTH_MOTORS, 25);
   }
 }
 /* Stops robot forward: both motors disabled */

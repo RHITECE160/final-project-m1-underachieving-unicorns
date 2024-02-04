@@ -74,9 +74,9 @@ AutoState AutoCurrentState = START;
 unsigned long lastActionTime = 0;  // Variable to store the last time an action was taken
 
 // Tuning Parameters
-const uint16_t normalSpeed = 15;
-const uint16_t fastSpeed = 25;
-const unsigned long movementDuration = 4000;  // Duration for movement forward autonomously in milliseconds
+const uint16_t normalSpeed = 10;
+const uint16_t fastSpeed = 20;
+const unsigned long movementDuration = 8000;  // Duration for movement forward autonomously in milliseconds
 const uint8_t lineColor = LIGHT_LINE;
 
 //Setting up servo

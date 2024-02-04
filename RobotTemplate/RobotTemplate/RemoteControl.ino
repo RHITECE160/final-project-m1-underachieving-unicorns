@@ -51,8 +51,8 @@ void RemoteControl() {
     Serial.println(map((map(rightStick, 0, 128, 0, 100) + map(turnValue, -128, 0, -50, 0)), -150, 150, -100, 100));
     if (rightStick > 10 || rightStick < -10 || turnValue > 10 || turnValue < -10) {
       enableMotor(2);
-      leftMotorSpeed = map((map(rightStick, 0, 128, 0, 100) - map(turnValue, 0, 128, 0, 50)), -150, 150, -100, 100);
-      rightMotorSpeed = map((map(rightStick, 0, 128, 0, 100) + map(turnValue, -128, 0, -50, 0)), -150, 150, -100, 100);
+      leftMotorSpeed = map((map(rightStick, 0, 128, 0, 100) - map(turnValue, 0, 128, 0, 50)), -150, 150, -100, 100)/2;
+      rightMotorSpeed = map((map(rightStick, 0, 128, 0, 100) + map(turnValue, -128, 0, -50, 0)), -150, 150, -100, 100)/2;
       if (leftMotorSpeed < 0) setMotorDirection(0, 1);
       else if (leftMotorSpeed > 0) setMotorDirection(0, 0);
       if (rightMotorSpeed < 0) setMotorDirection(1, 1);
