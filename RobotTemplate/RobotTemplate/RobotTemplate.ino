@@ -37,25 +37,29 @@
 #define PS2_CLK 2        //P6.7 <-> blue wire
 #define START_BUTTON 18  //P3.0 a push button on top of the breadboard
 
+// Defining for Encoders
+#define UART_SERIAL Serial
+
 // Create an instance of the playstation controller object
 PS2X ps2x;
 
 // Define high-level state machine
 enum RobotState {
-  INITIALIZE,
-  MANUAL,
-  AUTONOMOUS
+  INITIALIZE,  //Starts in Init
+  MANUAL,      // Square to go to Manual
+  AUTONOMOUS,  // Circle to go to Autonomous from Manual
+  CALIBRATE    // Calibration for line following
 };
 
-int turnValue;
-int rightStick;
-int leftMotorSpeed;
+int turnValue;       // Dynamic turning in manual (X position)
+int rightStick;      // Checking Right Stick position for forward/backwards (Y position)
+int leftMotorSpeed;  // Separate motor speeds to allow for turning
 int rightMotorSpeed;
-int clawPos;
-int currentMillis;
-boolean clawOn = false;
-boolean switchPressed = false;
-
+int clawPos;                    // To tell claw to open or close
+int currentMillis;              // Timer placeholder
+boolean clawOn = false;         // Boolean to check if claw is closed or open
+boolean switchPressed = false;  // Boolean to determine if switch has been pressed
+boolean calibrated = false;     // Boolean to determine if line following has been calibrated
 // Define lower-level state machine for AUTONOMOUS mode
 enum AutoState {
   START,
@@ -77,10 +81,12 @@ unsigned long lastActionTime = 0;  // Variable to store the last time an action 
 const uint16_t normalSpeed = 10;
 const uint16_t fastSpeed = 20;
 const unsigned long movementDuration = 8000;  // Duration for movement forward autonomously in milliseconds
-const uint8_t lineColor = LIGHT_LINE;
+const uint8_t lineColor = LIGHT_LINE;         // Setting color for line following
+const float wheelDiameter = 2.7559055; 
+const int cntPerRevolution = 360; 
+const int inchesToTravelLineFollow = 12; //Distance to line follow
+Servo myservo;  // Setting up servo
 
-//Setting up servo
-Servo myservo;
 
 void setup() {
   Serial.begin(57600);
@@ -136,30 +142,38 @@ void updateStateMachine() {
   switch (RobotCurrentState) {
     case INITIALIZE:
       if (ps2x.Button(PSB_SQUARE)) {
-        Serial.print("start button has been pressed going to manual");
-        //go to Manual state when start button pushed
         RobotCurrentState = MANUAL;
       }
+
+      if (ps2x.Button(PSB_CROSS) && !calibrated) {
+        RobotCurrentState = CALIBRATE;
+        calibrated = true;
+      }
+
       break;
 
     case MANUAL:
       Serial.print("in manual state........");
       if (ps2x.Button(PSB_CIRCLE)) {
-        // go to Autonomous state when circle button pushed
         Serial.print("stop button has been pressed going to auton");
         RobotCurrentState = AUTONOMOUS;
       }
       break;
 
     case AUTONOMOUS:
+      if (!calibrated) {
+        RobotCurrentState = CALIBRATE;
+        calibrated = true;
+        break;
+      }
       Serial.print("in autonomous state........");
       if (ps2x.Button(PSB_SQUARE)) {
-        // go to manual state when square button pushed
         RobotCurrentState = MANUAL;
-        // reset autonomous state to start state for the next time
         AutoCurrentState = START;
       }
+      break;
 
+    case CALIBRATE:
       break;
   }
 }
@@ -191,6 +205,14 @@ void executeStateActions() {
       Serial.println("Manual Mode");
       RemoteControl();
       // Add any additional actions for the manual state
+      break;
+
+    case CALIBRATE:
+      calibrateLineSensor(lineColor);
+      disableMotor(BOTH_MOTORS);
+      delay(500);
+      enableMotor(BOTH_MOTORS);
+      RobotCurrentState = MANUAL;
       break;
   }
 }
