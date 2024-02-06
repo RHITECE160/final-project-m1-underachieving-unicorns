@@ -11,9 +11,11 @@
   the higher-level state is switched to IDLE to await the next instruction.
 
   State Machine description:
-  The robot moves forward for a short time using a non-blocking delay, then 
-  the motors stop. Then the next few states are place-holders. The Robot returns
-  to IDLE state when autonomous functions are complete.
+  The robot follows the line for a specified distance, then moves forward until it hits a wall. 
+  Then, it moves backwards, turns to the right, moves forward for a specified amount of time, 
+  then follows the line and moves to the end. Once it reaches the end, it moves backwards a short
+  distance then releases the marigold.
+
 
   Created by: Underachieving Unicorns
   Date: 2/4/24
@@ -22,18 +24,18 @@
 void AutonomousControl() {
   while (AutoCurrentState != IDLE) {
     switch (AutoCurrentState) {
-      case START:
+      case START: //Start State
         Serial.println("in Autonomous mode the current state: START");
         AutoCurrentState = AUTO_ACTION1;  // Transition to next state
         break;
 
-      case AUTO_ACTION1:
+      case AUTO_ACTION1: //First action, follows line
         Serial.println("in Autonomous mode the current state: AUTO_ACTION1");
         followLine();
         AutoCurrentState = AUTO_ACTION2;
         break;
 
-      case AUTO_ACTION2:
+      case AUTO_ACTION2: //Second action, moves forward until bump switch, then moves backwards
         Serial.println("in Autonomous mode the current state: AUTO_ACTION2");
         if (getBumpSwitchPressed() > 0) {
           stop();  //stop the forward movement
@@ -44,7 +46,7 @@ void AutonomousControl() {
         } else forward(50);
         break;
 
-      case AUTO_ACTION3:
+      case AUTO_ACTION3: //Third action, turns to the right and moves forward
         Serial.println("in Autonomous mode the current state: AUTO_ACTION3");
         // // Add state instructions here
         Serial.println("right");
@@ -54,7 +56,7 @@ void AutonomousControl() {
         AutoCurrentState = AUTO_ACTION4;  // Transition to next state
         break;
 
-      case AUTO_ACTION4:
+      case AUTO_ACTION4: //Fourth action, line follows then moves until it hits the end then goes backwards and drops the marigold
         Serial.println("in Autonomous mode the current state: AUTO_ACTION4");
          followLine();
         while (!switchPressed) {

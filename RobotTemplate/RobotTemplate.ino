@@ -10,11 +10,11 @@
   AutonomousControl.ino
   MotorFunctions.ino
   RemoteControl.ino
+  IRTransmitter.ino
 
   written for the MSP432401 board
-  Author: Deborah Walter
-  Last revised: 11/28/2023
-
+  Author: Underachieving Unicorns
+  Last revised: 2/5/2024
 ***** Hardware Connections: *****
      start button       P3.0
      
@@ -59,6 +59,7 @@ int currentMillis;              // Timer placeholder
 boolean clawOn = false;         // Boolean to check if claw is closed or open
 boolean switchPressed = false;  // Boolean to determine if switch has been pressed
 boolean calibrated = false;     // Boolean to determine if line following has been calibrated
+
 // Define lower-level state machine for AUTONOMOUS mode
 enum AutoState {
   START,
@@ -84,8 +85,8 @@ const uint8_t lineColor = LIGHT_LINE;         // Setting color for line followin
 const float wheelDiameter = 2.7559055;
 const int cntPerRevolution = 360;
 const int inchesToTravelLineFollow = 24;  //Distance to line follow
-const int inchesToTravelBack = 4.2;
-const int inchesToTurnRight = 4.625;
+const int inchesToTravelBack = 4.2;       // Distance to move backwards
+const int inchesToTurnRight = 4.625;      // Distance to turn right
 Servo myservo;                            // Setting up servo
 uint16_t sensorVal[LS_NUM_SENSORS];
 uint16_t sensorCalVal[LS_NUM_SENSORS];
@@ -127,7 +128,7 @@ void setup() {
 void loop() {
   // Read input from PlayStation controller
   ps2x.read_gamepad();
-delayMicroseconds(50 * 1000);
+  delayMicroseconds(50 * 1000);
   // Update state machine based on button input
   updateStateMachine();
 
@@ -165,9 +166,9 @@ void updateStateMachine() {
       } else
         break;
 
-    case AUTONOMOUS:
+    case AUTONOMOUS: 
       Serial.println("Auton Case");
-      if (!calibrated) {
+      if (!calibrated) { // Ensures the robot has been calibrated before line following
         RobotCurrentState = CALIBRATE;
         calibrated = true;
         break;

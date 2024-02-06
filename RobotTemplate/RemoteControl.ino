@@ -7,11 +7,16 @@
   example. 
 
   Button map:
-  PAD UP button moves both motors forward
-  CROSS button stops motors
-
-  Created by: Your Name
-  Date: Current Date
+  Square button puts the robot in MANUAL
+  Circle button puts the robot in AUTONOMOUS
+  R2 engages the claw
+  R1 releases the claw
+  Right Stick controls the movement in MANUAL
+  Cross button calibrates the line sensor
+  L2 transmits the IR light
+  
+  Created by: Underachieving Unicorns
+  Date: 2/5/2024
   Version: 1.0
 */
 

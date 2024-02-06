@@ -6,14 +6,31 @@
   motors to move forward and stop.
 
   Functions:
-  1. void moveForward()
-     - Activates the motor to move forward.
+  1. void followLine()
+     - Activates the motor to move forward, following the line.
 
-  2. void stopMotor()
-     - Stops the motor.
+  2. void forward(int x)
+     - Activates the motor to move forward for an input millisecond duration.
 
-  Created by: Your Name
-  Date: Current Date
+  3. void backwards()
+     - Activates the motor to move backwards a specified amount of inches.
+
+  4. void turnRight()
+     - Activates the motor to turn the robot right 90 degrees.
+
+  5. void floorCalibration()
+     - Calibrates the line sensor for line following.
+
+  6. float distanceTraveled(float wheel_diam, uint16_t cnt_per_rev, uint8_t current_cnt)
+     - Uses the encoders to determine distance traveled for debugging purposes.
+
+  7. uint32_t countForDistance(float wheel_diam, uint16_t cnt_per_rev, uint32_t distance)
+     - Calculates the distance the robot will need to travel.
+
+  8. void stop()
+     - Stops the robot's movement.
+  Created by: Underachieving Unicorns
+  Date: 2/5/2024
   Version: 1.0
 */
 
